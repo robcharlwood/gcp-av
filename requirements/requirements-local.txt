@@ -1,0 +1,2 @@
+-r requirements-dev.txt
+pre-commit==1.17.0
