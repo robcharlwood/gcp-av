@@ -23,7 +23,7 @@ The ``.python-version`` and ``.terraform-version`` files will ensure these versi
 ### Prerequisites
 
 * Create a project on Google Cloud Platform - they offer $300 free credit for the first year!
-* Create a service account for Terraform inside your new project - this will allow you to store terraform state remotely in a google cloud storage bucket.
+* Create a service account for Terraform inside your new project - this will allow your terraform access to the project remotely.
 * Download the service account JSON security key and place it in a ``.keys`` folder in the root of the project. Terraform will use this file to authenticate itself with Google in order to provision the relevant infrastructure.
 
 We then need to give the terraform account the relevant priviledges for your project. So add the following roles to the service account
@@ -40,7 +40,7 @@ and this is a hack weekend, I'm going to leave them as this.
 
 * Create a webhook in your Slack account and make a note of the webhook URL.
 * Update the ``terraform/terraform.tfvars`` file with your own details for your google project and slack webhook url.
-* Create a new private Google Cloud Storage bucket called ``gcp-av-terraform``. Terraform will store its state here.
+* Create a new private Google Cloud Storage bucket called ``gcp-av-terraform``. This allows you to store terraform state remotely if working in a team.
 
 ### Installation locally
 
