@@ -6,6 +6,8 @@ A low cost and simple Anti Virus scanning for CloudStorage buckets using cloud f
 This codebase is designed for small and fairly low traffic use cases. However, since this was created in a single weekend hackathon, its probably not production ready. The functions scan any file uploaded to a specified bucket for viruses. Any files found to be infected are removed from the bucket. For most large, real world scenarios this wouldn't necessarily be desirable.
 However, the code could be updated to handle quarantining of infected files to a separate bucket until they can be triaged further.
 
+This work was inspired by the wonderful engineers over at [Upside](https://engineering.upside.com/) who have built [an excellent solution](https://github.com/upsidetravel/bucket-antivirus-function) for [Amazon AWS](https://aws.amazon.com/).
+
 ## Initial checkout and setup of codebase
 
 * Open terminal and move to a suitable directory on your machine
