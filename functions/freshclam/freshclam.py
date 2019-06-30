@@ -79,6 +79,8 @@ def upload_defs_to_gcs(bucket_name, local_path):
                 blob.upload_from_filename(local_file_path)
             else:
                 print("Not uploading %s because md5s match." % filename)
+    msg = "ClamAV Virus definitions have been updated! :white_check_mark:"
+    slack_notification(msg, "good")
 
 
 def update_defs_from_gcs(bucket_name):
@@ -98,6 +100,18 @@ def update_defs_from_gcs(bucket_name):
             print("Download definition file %s from gcs://%s" % (filename, bucket_name))
             blob = bucket.blob(filename)
             blob.download_to_filename(local_path)
+
+
+def slack_notification(message, color):
+    """ Sends a notification message to slack channel.
+    """
+    if os.environ.get("SLACK_WEBHOOK_URL"):
+        print("Sending slack notifications...")
+        payload = {"color": color, "text": message}
+        url = "{}".format(os.environ["SLACK_WEBHOOK_URL"])
+        requests.post(url, json=payload)
+        return payload
+    return None
 
 
 def update_defs_from_freshclam(path, freshclam_path=""):

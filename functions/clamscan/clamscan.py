@@ -5,6 +5,7 @@ import hashlib
 import os
 from subprocess import PIPE, STDOUT, Popen
 
+import requests
 from google.api_core.exceptions import NotFound
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import storage
@@ -102,6 +103,18 @@ def update_defs_from_gcs(bucket_name):
             blob.download_to_filename(local_path)
 
 
+def slack_notification(message, color):
+    """ Sends a notification message to slack channel.
+    """
+    if os.environ.get("SLACK_WEBHOOK_URL"):
+        print("Sending slack notifications...")
+        payload = {"color": color, "text": message}
+        url = "{}".format(os.environ["SLACK_WEBHOOK_URL"])
+        requests.post(url, json=payload)
+        return payload
+    return None
+
+
 def scan_file(filepath, clamscan_path):
     """ Scans the file at the passed filepath for viruses and returns the result.
     """
@@ -117,9 +130,19 @@ def scan_file(filepath, clamscan_path):
     output = av_proc.communicate()[0]
     print("clamscan output:\n%s" % output)
     if av_proc.returncode == 0:
+        msg = "Detected upload of CLEAN file `{}` in GCS. :white_check_mark:".format(
+            filepath
+        )
+        slack_notification(msg, "good")
         return "CLEAN"
     elif av_proc.returncode == 1:
+        msg = (
+            "Detected upload of INFECTED file `{}` in GCS. File has been removed! "
+            ":heavy_exclamation_mark:"
+        ).format(filepath)
+        slack_notification(msg, "danger")
         return "INFECTED"
-    msg = "Unexpected exit code from clamscan: %s.\n" % av_proc.returncode
+    msg = "Unexpected exit code from ClamAV when scanning: %s.\n" % av_proc.returncode
+    slack_notification(msg, "warning")
     print(msg)
     raise Exception(msg)
