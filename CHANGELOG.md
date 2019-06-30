@@ -15,3 +15,15 @@ Types of changes are:
 * **Security** in case of vulnerabilities.
 
 ## Unreleased
+
+## [v1.0.0](https://github.com/robcharlwood/gcp-av/releases/tag/v1.0.0) - 2019-06-30
+
+### Added
+
+* Basic cloud functions to scan files uploaded to GCS and keep virus DB up to date.
+* README and documentation on working with the codebase.
+* Terraform to provision the project.
+* Basic test framework in place.
+* Integration with Travis CI and coveralls.
+* Basic python code validation and formatting with black, flake8 and isort.
+* Makefile with basic commands to carry out all the various stages of a build.
