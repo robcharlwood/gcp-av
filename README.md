@@ -27,7 +27,7 @@ The ``.python-version`` and ``.terraform-version`` files will ensure these versi
 ### Prerequisites
 
 * Create a project on Google Cloud Platform - they offer $300 free credit for the first year!
-* Create a service account for Terraform inside your new project - this will allow your terraform access to the project remotely.
+* Create a service account for Terraform inside your new project - this will allow terraform access to the project remotely.
 * Download the service account JSON security key and place it in a ``.keys`` folder in the root of the project. Terraform will use this file to authenticate itself with Google in order to provision the relevant infrastructure.
 
 We then need to give the terraform account the relevant priviledges for your project. So add the following roles to the service account
@@ -46,7 +46,7 @@ and this is a hack weekend, I'm going to leave them as this.
 * Update the ``terraform/terraform.tfvars`` file with your own details for your google project and Slack webhook url.
 * Create a new private Google Cloud Storage bucket called ``gcp-av-terraform``. This allows you to store terraform state remotely if working in a team.
 
-In order for terraform state to work correctly, you should be working with a bucket that supports versioning. Annoyingly, this doens't seem to have
+In order for terraform state to work correctly, you should be working with a bucket that supports versioning. Annoyingly, this doesn't seem to have
 a toggle in the Google Cloud Console and so you have to do this remotely via their APIs.
 
 To turn on versioning in our terraform bucket, follow the steps below:
@@ -82,7 +82,7 @@ Once all the code dependencies have been installed, then you need to follow the 
 
 ### Running everything.
 
-To See this working from end to end, follow the instructions below:
+To see this working from end to end, follow the instructions below:
 
 * Run ``make build_clamscan`` - this will bundle up the cloud function that runs virus scans on files uploaded to our bucket.
 * Run ``make build_freshclam`` - this will bundle up the cloud function that keeps the virus database up to date.
@@ -90,7 +90,7 @@ To See this working from end to end, follow the instructions below:
 * Run ``make terraform_plan`` - this effectively dry runs your terraform and outputs details on what will change.
 * Run ``make terraform_apply`` - this will actually apply your infrastructure to your new project
 
-This can take up to 10 minutes to complete depending on how Google is feeling that day.
+This can take up to 10 minutes to complete depending on how energetic Google is feeling.
 Once this is complete, you are ready to run some tests through!
 
 * Go to your ``freshclam`` cloud function and trigger it. You don't normally need to do this as it will run automatically once every 24 hours, but I am assuming you don't want to wait that long. :-) This will pull down the virus definitions database and store it to the relevant private bucket.
@@ -107,6 +107,8 @@ Once this is complete, you are ready to run some tests through!
 
 To ensure that you don't incur any costs on the project once you are done, delete the whole project from your Google Cloud Console.
 To clean up locally, simply run the ``make clean`` command.
+
+If you just want to reset the Google Cloud project so that you can run this through again, then you can run ``make terraform_destroy`` and that will tear down all the created infrastructure so that you can start fresh.
 
 ### Running tests
 
