@@ -1,0 +1,16 @@
+# Config file for automatic testing at travis-ci.org
+dist: xenial
+language: python
+
+python:
+  - "3.7"
+
+install:
+  - pip install -r requirements/requirements-travis.txt
+
+script:
+  - find . -type f -name '*.pyc' -delete
+  - pytest ./functions
+
+after_success:
+  - coveralls
