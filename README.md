@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/robcharlwood/gcp-av.svg?branch=master)](https://travis-ci.org/robcharlwood/gcp-av/) [![Coverage Status](https://coveralls.io/repos/github/robcharlwood/gcp-av/badge.svg?branch=master)](https://coveralls.io/github/robcharlwood/gcp-av?branch=master)
 
-Anti Virus scanning for CloudStorage buckets using cloud functions and [ClamAV](https://www.clamav.net/).
-Any files found to be infected are removed from the bucket. For most large, real world scenarios this wouldn't necessarily be desirable.
+A low cost and simple Anti Virus scanning for CloudStorage buckets using cloud functions and [ClamAV](https://www.clamav.net/).
+This codebase is designed for small and fairly low traffic use cases. However, since this was created in a single weekend hackathon, its probably not production ready. The functions scan any file uploaded to a specified bucket for viruses. Any files found to be infected are removed from the bucket. For most large, real world scenarios this wouldn't necessarily be desirable.
 However, the code could be updated to handle quarantining of infected files to a separate bucket until they can be triaged further.
 
 ## Initial checkout and setup of codebase
@@ -136,6 +136,24 @@ see the [tags on this repository](https://github.com/robcharlwood/gcp-av/tags).
 ## Changes
 
 Please see the [CHANGELOG.md](https://github.com/robcharlwood/gcp-av/blob/master/CHANGELOG.md) file additions, changes, deletions and fixes between each version
+
+## Next Steps for the project
+
+* Proper unit tests and test coverage.
+* Refactoring the re-usable code (a load is currently copied and pasted between functions) into a single re-usable module.
+* See if I can get clamav db update command to run in the cloud function rather than manually downloading database updates with each run.
+* Improve logging - its all prints at the moment - yuck.
+* Quarantine buckets
+* Metrics
+* Granual control over the resources provisioned to the infrastructure in the terraform e.g allow cloud function memory to be configured
+* Lock down security roles on the terraform service account
+* Allow more configurability with how the buckets, functions, pubsub topics and scheduler are named and described
+
+## Current Limitations
+
+* With cloud functions having an ephemeral disk store of 500MB, this limits the size of file we can scan on the fly. Anything above about 300MB and you will require either a dedicated Compute Engine Instance or Kubernetes cluster.
+* Scans are slow. These functions are limited to fairly paltry amounts of shared resources - its never going to fly - not great for buckets where you are getting hundreds of uploads a minute. Again on high traffic stuff, you'll probably go for a more dedicated solution. For a simple blog or website this will work quite nicely.
+* Database updates are done manually at the moment once every 24 hours. Ideally we would want to use ClamAV's dedicated update tool called ``freshclam``. However, I have been unable to get that to run in a cloud function due to limitations on user roles in the functions runtime.
 
 ## License
 
