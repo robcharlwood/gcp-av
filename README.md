@@ -39,8 +39,31 @@ Please note, that these roles could probably be tightended up from a security pe
 and this is a hack weekend, I'm going to leave them as this.
 
 * Create a webhook in your Slack account and make a note of the webhook URL.
-* Update the ``terraform/terraform.tfvars`` file with your own details for your google project and slack webhook url.
+* Update the ``terraform/terraform.tfvars`` file with your own details for your google project and Slack webhook url.
 * Create a new private Google Cloud Storage bucket called ``gcp-av-terraform``. This allows you to store terraform state remotely if working in a team.
+
+In order for terraform state to work correctly, you should be working with a bucket that supports versioning. Annoyingly, this doens't seem to have
+a toggle in the Google Cloud Console and so you have to do this remotely via their APIs.
+
+To turn on versioning in our terraform bucket, follow the steps below:
+
+* Generate an access token on [Google's Oauth playground]() with access to everything cloud storage related.
+* Once you have the access token, run the below command substituting out the relevant data with your own.
+
+```bash
+curl -X PATCH --data '{"versioning": {"enabled": true}}' \
+    -H "Authorization: Bearer <your_access_token>" \
+    -H "Content-Type: application/json" \
+    "https://www.googleapis.com/storage/v1/b/gcp-av-terraform?fields=versioning"
+```
+Once that has run, you should confirm that the bucket is now versioned. You can do that by running the command below:
+
+```bash
+curl -X GET -H "Authorization: Bearer <your_access_token>" \
+    "https://www.googleapis.com/storage/v1/b/gcp-av-terraform?fields=versioning"
+```
+
+All tickety boo? Let's move on!
 
 ### Installation locally
 
@@ -69,10 +92,10 @@ Once this is complete, you are ready to run some tests through!
 * Go to your ``freshclam`` cloud function and trigger it. You don't normally need to do this as it will run automatically once every 24 hours, but I am assuming you don't want to wait that long. :-) This will pull down the virus definitions database and store it to the relevant private bucket.
 * Once this has completed successfully, open your Slack and head to the room you configured for your web hook.
 * Open the Cloud storage browser in the Google Cloud Console and make sure you are in the ``gcp-av-watch-bucket`` bucket.
-* Upload a ``clean.txt`` text file with "hello world" on something in it and wait for Slack to pop out a notification that it has found and scanned a clean file.
+* Upload a ``clean.txt`` text file with "hello world" or something in it and wait for Slack to pop out a notification that it has found and scanned a clean file.
 * Upload a second text file called ``infected.txt`` with the following content ``X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*
 ``.
-* Wait for a slack notification saying that an infected file has been uploaded to the bucket.
+* Wait for a Slack notification saying that an infected file has been uploaded to the bucket.
 * Check the bucket and ensure that the infected file was deleted!
 * Profit! :)
 
@@ -115,13 +138,3 @@ Please see the [CHANGELOG.md](https://github.com/robcharlwood/gcp-av/blob/master
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/robcharlwood/gcp-av/blob/master/LICENSE) file for details
-
-
-curl -X PATCH --data '{"versioning": {"enabled": true}}' \
-    -H "Authorization: Bearer ya29.Gls2B4eWhfvIo951g7EDW0oxXUQRF17n8ynGsjOdlbRCpU2mxrwI0iElVYveZIVQsS74Bn445X8GqsLq4XYJ45xJ8tkLdgLsiAUduaHVIjZfbwCsmM9S9xev0nVT" \
-    -H "Content-Type: application/json" \
-    "https://www.googleapis.com/storage/v1/b/gcp-av-terraform?fields=versioning"
-
-
-curl -X GET -H "Authorization: Bearer ya29.Gls2B4eWhfvIo951g7EDW0oxXUQRF17n8ynGsjOdlbRCpU2mxrwI0iElVYveZIVQsS74Bn445X8GqsLq4XYJ45xJ8tkLdgLsiAUduaHVIjZfbwCsmM9S9xev0nVT" \
-    "https://www.googleapis.com/storage/v1/b/gcp-av-terraform?fields=versioning"
