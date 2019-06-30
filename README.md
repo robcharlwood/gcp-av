@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/robcharlwood/gcp-av.svg?branch=master)](https://travis-ci.org/robcharlwood/gcp-av/) [![Coverage Status](https://coveralls.io/repos/github/robcharlwood/gcp-av/badge.svg?branch=master)](https://coveralls.io/github/robcharlwood/gcp-av?branch=master)
 
-Anti Virus scanning for CloudStorage buckets using cloud functions and [ClamAV](https://www.clamav.net/)
+Anti Virus scanning for CloudStorage buckets using cloud functions and [ClamAV](https://www.clamav.net/).
+Any files found to be infected are removed from the bucket. For most large, real world scenarios this wouldn't necessarily be desirable.
+However, the code could be updated to handle quarantining of infected files to a separate bucket until they can be triaged further.
 
 ## Initial checkout and setup of codebase
 
