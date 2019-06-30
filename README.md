@@ -47,7 +47,7 @@ a toggle in the Google Cloud Console and so you have to do this remotely via the
 
 To turn on versioning in our terraform bucket, follow the steps below:
 
-* Generate an access token on [Google's Oauth playground]() with access to everything cloud storage related.
+* Generate an access token on [Google's Oauth playground](https://developers.google.com/oauthplayground/) with access to everything cloud storage related.
 * Once you have the access token, run the below command substituting out the relevant data with your own.
 
 ```bash
