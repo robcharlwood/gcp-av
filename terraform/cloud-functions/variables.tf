@@ -12,3 +12,8 @@ variable "scan_bucket_name" {
   description = "Name of the GCS bucket to scan"
   type        = "string"
 }
+
+variable "SLACK_WEBHOOK_URL" {
+  description = "Slack webhook to send notifications to."
+  type        = "string"
+}

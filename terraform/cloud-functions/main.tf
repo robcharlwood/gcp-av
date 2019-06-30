@@ -5,7 +5,7 @@ resource "google_storage_bucket_object" "gcp-av-update-function-zip" {
 }
 
 resource "google_storage_bucket_object" "gcp-av-scan-function-zip" {
-  name   = "clamscan_func.zip"
+  name   = "clamscan_function.zip"
   bucket = "${var.functions_bucket_name}"
   source = "./build/clamscan_function.zip"
 }
@@ -26,6 +26,10 @@ resource "google_cloudfunctions_function" "gcp-av-update-function" {
     event_type = "google.pubsub.topic.publish"
     resource   = "${var.pubsub_topic_name}"
   }
+
+  environment_variables = {
+    SLACK_WEBHOOK_URL = "${var.SLACK_WEBHOOK_URL}"
+  }
 }
 
 resource "google_cloudfunctions_function" "gcp-av-scan-function" {
@@ -43,5 +47,9 @@ resource "google_cloudfunctions_function" "gcp-av-scan-function" {
   event_trigger {
     event_type = "google.storage.object.finalize"
     resource   = "${var.scan_bucket_name}"
+  }
+
+  environment_variables = {
+    SLACK_WEBHOOK_URL = "${var.SLACK_WEBHOOK_URL}"
   }
 }

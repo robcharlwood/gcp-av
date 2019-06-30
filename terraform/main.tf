@@ -20,6 +20,7 @@ module "cloud-functions" {
   functions_bucket_name = "${module.s3.gcp-av-functions-bucket-name}"
   scan_bucket_name      = "${module.s3.gcp-av-scan-bucket-name}"
   pubsub_topic_name     = "${module.pubsub.gcp-av-pubsub-topic-name}"
+  SLACK_WEBHOOK_URL     = "${var.SLACK_WEBHOOK_URL}"
 }
 
 module "scheduler" {
