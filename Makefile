@@ -7,7 +7,7 @@ PYTHON_REQUIRED := $(shell cat .python-version)
 TERRAFORM_OK := $(shell type -P terraform)
 TERRAFORM_REQUIRED := $(shell cat .terraform-version)
 CORRECT_TERRAFORM_INSTALLED := $(shell terraform -v | grep ${TERRAFORM_REQUIRED})
-AMZ_LINUX_VERSION ?= 2
+AMZ_LINUX_VERSION := 2
 CWD := $(shell pwd)
 
 check_docker:
@@ -61,7 +61,7 @@ setup_git_hooks:
 	@echo '****** Setting up git hooks ******'
 	pre-commit install
 
-install: setup_venv setup_terraform setup_git_hooks
+install: check_docker setup_venv setup_terraform setup_git_hooks
 
 test: check_python
 	find . -type f -name '*.pyc' -delete
@@ -82,22 +82,24 @@ build_freshclam: check_docker
 		/bin/bash -c "cd /opt/app && ./scripts/build_freshclam_function.sh"
 
 clean:
+	rm -rf ./build
+	rm -rf ./.terraform
 	rm -rf ${VENV}
 
-terraform_init:
+terraform_init: check_terraform
 	terraform init ./terraform
 
-terraform_fmt:
+terraform_fmt: check_terraform
 	terraform fmt -recursive ./terraform
 
-terraform_validate:
+terraform_validate: check_terraform
 	terraform validate -var-file ./terraform/terraform.tfvars ./terraform
 
-terraform_plan:
+terraform_plan: check_terraform
 	terraform plan -var-file ./terraform/terraform.tfvars ./terraform
 
-terraform_apply:
+terraform_apply: check_terraform
 	terraform apply -var-file ./terraform/terraform.tfvars ./terraform
 
-terraform_destroy:
+terraform_destroy: check_terraform
 	terraform destroy -var-file ./terraform/terraform.tfvars ./terraform
